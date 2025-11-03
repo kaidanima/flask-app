@@ -1,0 +1,30 @@
+name: Deploy Flask App to AWS EC2
+
+on:
+  push:
+    branches:
+      - main  # هر بار که روی main پوش می‌کنی اجرا می‌شه
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up SSH key
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.AWS_SSH_PRIVATE_KEY }}" > ~/.ssh/aws-key.pem
+          chmod 600 ~/.ssh/aws-key.pem
+
+      - name: Deploy to EC2
+        run: |
+          ssh -o StrictHostKeyChecking=no -i ~/.ssh/aws-key.pem ubuntu@3.239.171.243 "
+            cd ~/flask-app &&
+            git pull origin main &&
+            sudo systemctl restart nginx &&
+            docker compose down &&
+            docker compose up -d --build
+          "
