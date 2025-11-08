@@ -3,7 +3,7 @@ name: Deploy Flask App to AWS EC2
 on:
   push:
     branches:
-      - main  # هر بار که روی main پوش می‌کنی اجرا می‌شه
+      - main
 
 jobs:
   deploy:
